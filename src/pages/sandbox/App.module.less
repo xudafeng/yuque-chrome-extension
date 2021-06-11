@@ -1,0 +1,111 @@
+@import '~@/styles/common.less';
+
+.wrapper {
+  position: fixed;
+  right: @base-padding * 2;
+  top: @base-padding * 2;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px 0 rgb(0, 0, 0, 10%);
+  color: @text-color;
+  width: @main-board-width;
+  
+  .header {
+    display: flex;
+    justify-content: flex-end;
+    padding: 8px;
+
+    .close {
+      padding: 0 2px;
+      cursor: pointer;
+    }
+  }
+
+  .items {
+    padding: 0 @base-padding * 2;
+
+    .login {
+      min-height: 100px;
+      margin: @base-padding * 2 0;
+
+      .icon {
+        display: flex;
+        justify-content: center;
+        margin-bottom: @base-padding * 2;
+
+        &img {
+          width: 80px;
+        }
+      }
+    }
+  }
+
+  .account {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid @border-color;
+    margin-top: @base-padding * 2;
+    padding: @base-padding * 2 0;
+  }
+
+  :global {
+    .ant-tabs-card {
+      &.ant-tabs-small > .ant-tabs-nav .ant-tabs-tab {
+        padding: 4px 8px;
+        margin-right: 4px;
+      }
+    }
+    
+    .ant-tabs-tab {
+      .anticon {
+        margin-right: 2px !important;
+      }
+    } 
+    
+    .ant-btn {
+      line-height: 1.15;
+      padding: 0 12px;
+      box-shadow: none;
+      text-shadow: none;
+    
+      &.ant-dropdown-trigger .anticon {
+        height: 1em;
+      }
+    
+      &.ant-dropdown-trigger {
+        vertical-align: bottom;
+      }
+    
+      &,
+      &:hover,
+      &:focus {
+        background-image: linear-gradient(0deg, @grey-3, #fff);
+      }
+    
+      &.ant-btn-primary {
+        color: #fff !important;
+        background: @primary-color !important;
+        border-color: @primary-color !important;
+      }
+    
+      &.ant-btn-primary,
+      &.ant-btn-dashed {
+        &,
+        &:hover,
+        &:focus {
+          background-image: none;
+        }
+    
+        box-shadow: none;
+      }
+    
+      > .larkicon {
+        margin-right: 8px;
+    
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+    }
+  }
+}

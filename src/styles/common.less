@@ -1,0 +1,57 @@
+@import '~@/styles/parameters.less';
+
+/* reset */
+body {
+  width: 100%;
+  scroll-behavior: smooth;
+  color: @text-color;
+  font-family: @font-family;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  -webkit-user-select: none;
+  user-select: none;
+  margin: 0;
+  background-color: transparent;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-bottom: 0;
+}
+
+a {
+  &:focus {
+    text-decoration: none;
+  }
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+p {
+  margin-bottom: 0;
+}
+
+.clearfix {
+  display: block;
+  zoom: 1;
+
+  &::after {
+    content: ' ';
+    display: block;
+    font-size: 0;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+  }
+}

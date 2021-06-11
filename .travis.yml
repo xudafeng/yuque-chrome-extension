@@ -1,0 +1,16 @@
+sudo: false
+language: node_js
+node_js:
+  - 12
+cache:
+  npm: false
+install:
+  - npm i
+script:
+  - npm i vuepress -g
+  - vuepress build docs
+  - cd docs_dist
+  - git init
+  - git add --all .
+  - git commit -m "Travis CI Auto Builder"
+  - git push --quiet --force https://$REPO_TOKEN@github.com/xudafeng/yuque-chrome-extension.git master:gh-pages

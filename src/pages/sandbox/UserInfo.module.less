@@ -1,0 +1,45 @@
+@import '~@/styles/common.less';
+
+.wrapper {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  .name {
+    margin-left: 4px;
+  }
+}
+
+.popover {
+  .info {
+    padding: 12px;
+    border-bottom: 1px solid @border-color;
+
+    .login {
+      font-size: @font-size-sm;
+      color: @text-color-secondary;
+    }
+  }
+
+  :global {
+    .ant-popover-inner-content {
+      padding: 0;
+      width: 200px;
+    }
+
+    .ant-menu {
+      border: none;
+
+      .ant-menu-item {
+        margin-bottom: 0;
+        height: auto;
+        line-height: normal;
+        padding: 8px 12px;
+
+        &:hover {
+          background-color: @grey-3;
+        }
+      }
+    }
+  }
+}

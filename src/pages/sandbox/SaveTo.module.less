@@ -1,0 +1,28 @@
+@import '~@/styles/common.less';
+
+.wrapper {
+  .save {
+    margin-top: @base-padding * 2;
+  }
+
+  .list {
+    width: 100%;
+    margin-top: @base-padding * 2;
+  }
+
+  .editor {
+    position: fixed;
+    right: @main-board-width + @base-padding * 4;
+    top: @base-padding * 2;
+    padding: @base-padding;
+    background: #fff;
+    border-radius: @base-padding;
+    box-shadow: 0 1px 4px 0 rgb(0, 0, 0, 10%);
+    color: @text-color;
+    width: @main-editor-width;
+    min-height: @main-editor-width;
+    max-height: calc(100vh ~"-" @base-padding * 4);
+    overflow-y: scroll;
+    user-select: none;
+  }
+}
