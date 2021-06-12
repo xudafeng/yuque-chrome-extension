@@ -8,6 +8,7 @@ class App {
     this.sandboxURL = Chrome.extension.getURL('sandbox.html');
     this.iframeClassName = `sandbox-iframe-${Date.now()}`;
     this.darkModeClassName = `dark-mode-${Date.now()}`;
+    this.darkModeHTMLClassName = 'dark-1';
     this.areaSelection = null;
     this.bindEvent();
   }
@@ -47,17 +48,18 @@ class App {
   }
 
   get darkModeCSSFieldContent() {
+    const { darkModeHTMLClassName } = this;
     return `
-      html.dark-1 {
+      html.${darkModeHTMLClassName} {
         filter: invert(0.95) hue-rotate(180deg);
       }
-      html.dark-1 img,
-      html.dark-1 .icon-svg,
-      html.dark-1 .lake-svg-icon,
-      html.dark-1 .lake-icon-svgs,
-      html.dark-1 .ant-badge,
-      html.dark-1 .ant-btn.ant-btn-primary,
-      html.dark-1 .ant-switch-checked {
+      html.${darkModeHTMLClassName} img,
+      html.${darkModeHTMLClassName} .icon-svg,
+      html.${darkModeHTMLClassName} .lake-svg-icon,
+      html.${darkModeHTMLClassName} .lake-icon-svgs,
+      html.${darkModeHTMLClassName} .ant-badge,
+      html.${darkModeHTMLClassName} .ant-btn.ant-btn-primary,
+      html.${darkModeHTMLClassName} .ant-switch-checked {
         filter: invert(0.95) hue-rotate(180deg);
       }
     `;
@@ -104,13 +106,18 @@ class App {
   }
 
   enableDarkMode() {
-    const { darkModeClassName } = this;
+    const { darkModeClassName, darkModeHTMLClassName } = this;
     this.injectStyleIfNeeded(darkModeClassName, this.darkModeCSSFieldContent);
-    $('html').addClass('dark-1');
+    $('html').addClass(darkModeHTMLClassName);
   }
 
   disableDarkMode() {
-    $('html').removeClass('dark-1');
+    const { darkModeHTMLClassName } = this;
+    $('html').removeClass(darkModeHTMLClassName);
+  }
+
+  saveToNote(data) {
+    this.showBoard(data);
   }
 
   bindEvent() {
@@ -143,6 +150,11 @@ class App {
         }
         case GLOBAL_EVENTS.DISABLE_DARK_MODE: {
           this.disableDarkMode();
+          sendResponse(true);
+          return;
+        }
+        case GLOBAL_EVENTS.SAVE_TO_NOTE: {
+          this.saveToNote(request);
           sendResponse(true);
           return;
         }

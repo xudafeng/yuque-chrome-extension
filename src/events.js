@@ -7,6 +7,7 @@ export const GLOBAL_EVENTS = {
   GET_PAGE_HTML: 'global/get-page-html',
   GET_SELECTED_HTML: 'global/get-selected-html',
   START_SELECT: 'global/start-select',
+  SAVE_TO_NOTE: 'global/save-to-note',
 };
 
 export const PAGE_EVENTS = {
