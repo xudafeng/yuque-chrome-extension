@@ -18,6 +18,12 @@ window.__ = text => text;
 
 const { TabPane } = Tabs;
 
+const getCurrentAccount = () => new Promise(resolve => {
+  Chrome.storage.local.get(STORAGE_KEYS.CURRENT_ACCOUNT, (res = {}) => {
+    resolve(res[STORAGE_KEYS.CURRENT_ACCOUNT]);
+  });
+});
+
 const useViewModel = () => {
   const [account, setAccount] = useState({});
 
@@ -38,7 +44,7 @@ const useViewModel = () => {
   const onSelectAccount = setAccount;
 
   useEffect(() => {
-    Chrome.storage.local.get(STORAGE_KEYS.CURRENT_ACCOUNT, (res) => {
+    getCurrentAccount().then((res) => {
       setAccount(res[STORAGE_KEYS.CURRENT_ACCOUNT] || {});
     });
   }, []);
