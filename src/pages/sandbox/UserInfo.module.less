@@ -18,6 +18,17 @@
     .login {
       font-size: @font-size-sm;
       color: @text-color-secondary;
+      a {
+        margin-left: 4px;
+        opacity: 0;
+        transition: opacity 0.3s ease-in;
+      }
+    }
+
+    &:hover {
+      a {
+        opacity: 1;
+      }
     }
   }
 

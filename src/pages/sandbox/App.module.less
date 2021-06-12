@@ -5,15 +5,38 @@
   right: @base-padding * 2;
   top: @base-padding * 2;
   background: #fff;
-  border-radius: 8px;
+  border-radius: @base-padding;
   box-shadow: 0 1px 4px 0 rgb(0, 0, 0, 10%);
   color: @text-color;
   width: @main-board-width;
+  min-height: 360px;
+  display: flex;
+  flex-flow: column nowrap;
   
   .header {
+    padding: @base-padding @base-padding * 2;
     display: flex;
-    justify-content: flex-end;
-    padding: 8px;
+    justify-content: space-between;
+
+    .version {
+      color: @grey-4;
+      font-size: @font-size-sm;
+      transition: color 0.8s ease-in;
+      cursor: pointer;
+
+      .buildtime {
+        opacity: 0;
+        transition: opacity 0.8s ease-in;
+      }
+
+      &:hover {
+        color: @grey-8;
+
+        .buildtime {
+          opacity: 1;
+        }
+      }
+    }
 
     .close {
       padding: 0 2px;
@@ -22,6 +45,7 @@
   }
 
   .items {
+    flex: 1 1 auto;
     padding: 0 @base-padding * 2;
 
     .login {
@@ -43,9 +67,10 @@
   .account {
     display: flex;
     justify-content: space-between;
+    flex: 0 0 auto;
     border-top: 1px solid @border-color;
     margin-top: @base-padding * 2;
-    padding: @base-padding * 2 0;
+    padding: @base-padding @base-padding * 2;
   }
 
   :global {

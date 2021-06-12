@@ -1,6 +1,7 @@
 import React from 'react';
 import { Avatar, Menu, Popover } from 'antd';
 import PropTypes from 'prop-types';
+import LinkHelper from '@/core/link-helper';
 import { LogoutOutlined } from '@ant-design/icons';
 import styles from './UserInfo.module.less';
 
@@ -8,12 +9,20 @@ const UserInfo = (props) => {
   const { user, onLogout } = props;
   const menu = (
     <>
-      <div className={styles.info}>
+      <div
+        className={styles.info}
+      >
         <div className={styles.title}>
           {user.name}
         </div>
         <div className={styles.login}>
           {user.login}
+          <a
+            target="_blank"
+            href={LinkHelper.goMyPage(user)}
+          >
+            {__('访问主页')}
+          </a>
         </div>
       </div>
       <Menu>
@@ -46,6 +55,7 @@ const UserInfo = (props) => {
 
 UserInfo.propTypes = {
   user: PropTypes.object.isRequired,
+  onLogout: PropTypes.func,
 };
 
 export default UserInfo;

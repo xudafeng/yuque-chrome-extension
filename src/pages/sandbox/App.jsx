@@ -18,6 +18,12 @@ window.__ = text => text;
 
 const { TabPane } = Tabs;
 
+const getCurrentAccount = () => new Promise(resolve => {
+  Chrome.storage.local.get(STORAGE_KEYS.CURRENT_ACCOUNT, (res = {}) => {
+    resolve(res[STORAGE_KEYS.CURRENT_ACCOUNT] || {});
+  });
+});
+
 const useViewModel = () => {
   const [account, setAccount] = useState({});
 
@@ -38,9 +44,10 @@ const useViewModel = () => {
   const onSelectAccount = setAccount;
 
   useEffect(() => {
-    Chrome.storage.local.get(STORAGE_KEYS.CURRENT_ACCOUNT, (res) => {
-      setAccount(res[STORAGE_KEYS.CURRENT_ACCOUNT] || {});
-    });
+    getCurrentAccount()
+      .then(account => {
+        setAccount(account);
+      });
   }, []);
 
   return {
@@ -66,6 +73,12 @@ const App = (props) => {
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>
+        <span className={styles.version}>
+          v{process.env.VERSION}
+          <span className={styles.buildtime}>
+          /{process.env.BUILD_TIME}
+          </span>
+        </span>
         <span
           className={styles.close}
           onClick={onClose}
@@ -105,16 +118,18 @@ const App = (props) => {
                 {__('即将上新')}
               </TabPane>
             </Tabs>
-            <div className={styles.account}>
-              <FeedBack />
-              <UserInfo
-                user={account}
-                onLogout={onLogout}
-              />
-            </div>
           </>
         ) : <Login onConfirm={onSelectAccount} />}
       </div>
+      {account.id && (
+        <div className={styles.account}>
+          <FeedBack />
+          <UserInfo
+            user={account}
+            onLogout={onLogout}
+          />
+        </div>
+      )}
     </div>
   );
 };
