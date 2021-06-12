@@ -13,7 +13,7 @@ const useViewModel = () => {
     Chrome.tabs.query({
       currentWindow: true,
     }, (tabs) => {
-      tabs.map(tab => {
+      tabs.forEach(tab => {
         Chrome.tabs.sendMessage(tab.id, {
           action: darkMode ? GLOBAL_EVENTS.ENABLE_DARK_MODE : GLOBAL_EVENTS.DISABLE_DARK_MODE,
         });

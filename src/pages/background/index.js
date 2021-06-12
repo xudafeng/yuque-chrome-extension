@@ -15,11 +15,9 @@ const getHostNames = () => new Promise(resolve => {
 });
 
 Chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
-  switch (request.action) {
-    case GLOBAL_EVENTS.GET_ACCOUNT_HOSTS:
-      getHostNames().then(sendResponse);
-      return;
-    default:
-      return;
+  if (request.action === GLOBAL_EVENTS.GET_ACCOUNT_HOSTS) {
+    getHostNames().then(hostnames => {
+      sendResponse(hostnames);
+    });
   }
 });

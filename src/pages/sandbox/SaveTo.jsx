@@ -79,7 +79,7 @@ const useViewModel = () => {
   useEffect(() => {
     Chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
       switch (request.action) {
-        case GLOBAL_EVENTS.GET_SELECTED_HTML:
+        case GLOBAL_EVENTS.GET_SELECTED_HTML: {
           const { html } = request;
           const newHtml = formatHTML(html);
           const document = new window.DOMParser().parseFromString(newHtml, 'text/html');
@@ -88,9 +88,9 @@ const useViewModel = () => {
           setEditorValue(newEditorValue);
           sendResponse(true);
           return;
+        }
         default:
           sendResponse(true);
-          return;
       }
     });
   }, []);

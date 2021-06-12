@@ -23,40 +23,38 @@ const Login = (props) => {
     });
   };
 
-  const genPromiseList = (hostnames) => {
-    return Promise.all(hostnames.map(hostname => new Promise(resolve => {
-      const protocol = 'https';
-      const baseURL = `${protocol}://${hostname}`;
-      const url = '/api/mine';
-      request(url, {
-        baseURL,
-      })
-        .then(({ data, status }) => {
-          if (status === 200) {
-            resolve({
-              hostname,
-              protocol,
-              ...data.data,
-            });
-          } else {
-            resolve({
-              hostname,
-              protocol,
-              error: {},
-            });
-          }
-        })
-        .catch(e => {
+  const genPromiseList = (hostnames) => Promise.all(hostnames.map(hostname => new Promise(resolve => {
+    const protocol = 'https';
+    const baseURL = `${protocol}://${hostname}`;
+    const url = '/api/mine';
+    request(url, {
+      baseURL,
+    })
+      .then(({ data, status }) => {
+        if (status === 200) {
           resolve({
             hostname,
             protocol,
-            error: {
-              ...e,
-            },
+            ...data.data,
           });
+        } else {
+          resolve({
+            hostname,
+            protocol,
+            error: {},
+          });
+        }
+      })
+      .catch(e => {
+        resolve({
+          hostname,
+          protocol,
+          error: {
+            ...e,
+          },
         });
-    })));
-  };
+      });
+  })));
 
   useEffect(() => {
     Chrome.runtime.sendMessage({

@@ -1,6 +1,5 @@
 import Chrome from '@/core/chrome';
 import { GLOBAL_EVENTS } from '@/events';
-import { message } from 'antd';
 
 window.__ = text => text;
 
@@ -22,7 +21,7 @@ menuList.forEach(item => Chrome.contextMenus.create(item));
 
 Chrome.contextMenus.onClicked.addListener((info, tab) => {
   switch (info.menuItemId) {
-    case menuList[0].id:
+    case menuList[0].id: {
       const { pageUrl, selectionText } = info;
       Chrome.tabs.sendMessage(tab.id, {
         action: GLOBAL_EVENTS.SAVE_TO_NOTE,
@@ -30,10 +29,13 @@ Chrome.contextMenus.onClicked.addListener((info, tab) => {
         selectionText,
       });
       break;
+    }
     case menuList[1].id:
       Chrome.tabs.sendMessage(tab.id, {
         action: GLOBAL_EVENTS.SHOW_BOARD,
       });
+      break;
+    default:
       break;
   }
 });
