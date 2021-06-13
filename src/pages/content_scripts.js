@@ -158,6 +158,10 @@ class App {
           sendResponse(true);
           return;
         }
+        case GLOBAL_EVENTS.SAVE_TO_NOTE_IMAGE: {
+          sendResponse(true);
+          return;
+        }
         default:
           sendResponse(true);
       }
