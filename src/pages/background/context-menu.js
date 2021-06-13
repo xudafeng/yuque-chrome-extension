@@ -14,7 +14,15 @@ const menuList = [{
 }, {
   id: 'save-to-yuque',
   title: __('保存到语雀'),
-  contexts: ['page'],
+  contexts: [
+    'page',
+  ],
+}, {
+  id: 'save-to-yuque-image',
+  title: __('保存到语雀'),
+  contexts: [
+    'image',
+  ],
 }];
 
 menuList.forEach(item => Chrome.contextMenus.create(item));
@@ -35,6 +43,14 @@ Chrome.contextMenus.onClicked.addListener((info, tab) => {
         action: GLOBAL_EVENTS.SHOW_BOARD,
       });
       break;
+    case menuList[2].id: {
+      const { srcUrl } = info;
+      Chrome.tabs.sendMessage(tab.id, {
+        action: GLOBAL_EVENTS.SAVE_TO_NOTE_IMAGE,
+        srcUrl,
+      });
+      break;
+    }
     default:
       break;
   }

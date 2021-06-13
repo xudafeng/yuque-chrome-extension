@@ -76,7 +76,7 @@ const App = (props) => {
         <span className={styles.version}>
           v{process.env.VERSION}
           <span className={styles.buildtime}>
-          /{process.env.BUILD_TIME}
+            /{process.env.BUILD_TIME}
           </span>
         </span>
         <span
