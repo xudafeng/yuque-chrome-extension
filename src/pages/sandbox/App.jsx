@@ -44,9 +44,10 @@ const useViewModel = () => {
   const onSelectAccount = setAccount;
 
   useEffect(() => {
-    getCurrentAccount().then((res) => {
-      setAccount(res[STORAGE_KEYS.CURRENT_ACCOUNT] || {});
-    });
+    getCurrentAccount()
+      .then(account => {
+        setAccount(account);
+      });
   }, []);
 
   return {
@@ -72,6 +73,12 @@ const App = (props) => {
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>
+        <span className={styles.version}>
+          v{process.env.VERSION}
+          <span className={styles.buildtime}>
+          /{process.env.BUILD_TIME}
+          </span>
+        </span>
         <span
           className={styles.close}
           onClick={onClose}
@@ -111,16 +118,18 @@ const App = (props) => {
                 {__('即将上新')}
               </TabPane>
             </Tabs>
-            <div className={styles.account}>
-              <FeedBack />
-              <UserInfo
-                user={account}
-                onLogout={onLogout}
-              />
-            </div>
           </>
         ) : <Login onConfirm={onSelectAccount} />}
       </div>
+      {account.id && (
+        <div className={styles.account}>
+          <FeedBack />
+          <UserInfo
+            user={account}
+            onLogout={onLogout}
+          />
+        </div>
+      )}
     </div>
   );
 };
