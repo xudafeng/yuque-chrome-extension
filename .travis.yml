@@ -11,6 +11,7 @@ script:
   - npm i vuepress -g
   - vuepress build docs
   - cd docs_dist
+  - cp ../package.json ./package.json
   - git init
   - git add --all .
   - git commit -m "Travis CI Auto Builder"
