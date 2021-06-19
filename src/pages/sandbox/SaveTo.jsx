@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Radio, Select, message } from 'antd';
-import { get as safeGet } from 'lodash';
+import { get as safeGet, isEmpty } from 'lodash';
 import Chrome from '@/core/chrome';
 import request from '@/core/request';
 import LinkHelper from '@/core/link-helper';
@@ -63,8 +63,17 @@ const useViewModel = () => {
   const [currentBookId, setCurrentBookId] = useState(NOTE_DATA.id);
   const [currentType, setCurrentType] = useState(SELECT_TYPES[0].key);
   const [editorValue, setEditorValue] = useState([]);
+  const [showContinueButton, setShowContinueButton] = useState(false);
 
   const onSelectType = setCurrentType;
+
+  const startSelect = () => {
+    getCurrentTab().then(tab => {
+      Chrome.tabs.sendMessage(tab.id, {
+        action: GLOBAL_EVENTS.START_SELECT,
+      });
+    });
+  };
 
   useEffect(() => {
     request('/api/mine/personal_books?limit=200&offset=0')
@@ -76,24 +85,33 @@ const useViewModel = () => {
       });
   }, []);
 
-  useEffect(() => {
-    Chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
-      switch (request.action) {
-        case GLOBAL_EVENTS.GET_SELECTED_HTML: {
-          const { html } = request;
-          const newHtml = formatHTML(html);
-          const document = new window.DOMParser().parseFromString(newHtml, 'text/html');
-          const value = deserialize(document.body);
-          const newEditorValue = editorValue.slice().concat(value);
-          setEditorValue(newEditorValue);
-          sendResponse(true);
-          return;
-        }
-        default:
-          sendResponse(true);
+  const onReviceMessage = (request, _, sendResponse) => {
+    switch (request.action) {
+      case GLOBAL_EVENTS.GET_SELECTED_HTML: {
+        const { html } = request;
+        const newHtml = formatHTML(html);
+        const document = new window.DOMParser().parseFromString(newHtml, 'text/html');
+        const value = deserialize(document.body);
+        setEditorValue([
+          ...editorValue,
+          ...value,
+        ]);
+        sendResponse(true);
+        return;
       }
-    });
-  }, []);
+      default:
+        sendResponse(true);
+    }
+  };
+
+  useEffect(() => {
+    Chrome.runtime.onMessage.addListener(onReviceMessage);
+    return () => {
+      Chrome.runtime.onMessage.removeListener(onReviceMessage);
+    };
+  }, [
+    editorValue,
+  ]);
 
   useEffect(() => {
     if (currentType === SELECT_TYPES[0].key) {
@@ -125,11 +143,7 @@ const useViewModel = () => {
         ]);
       });
     } else if (currentType === SELECT_TYPES[1].key) {
-      getCurrentTab().then(tab => {
-        Chrome.tabs.sendMessage(tab.id, {
-          action: GLOBAL_EVENTS.START_SELECT,
-        });
-      });
+      startSelect();
     } else if (currentType === SELECT_TYPES[2].key) {
       getPageHTML().then(res => {
         const html = formatHTML(res);
@@ -139,6 +153,13 @@ const useViewModel = () => {
       });
     }
   }, [
+    currentType,
+  ]);
+
+  useEffect(() => {
+    setShowContinueButton(currentType === SELECT_TYPES[1].key && !isEmpty(editorValue));
+  }, [
+    editorValue,
     currentType,
   ]);
 
@@ -211,6 +232,10 @@ const useViewModel = () => {
     }
   };
 
+  const onContinue = () => {
+    startSelect();
+  };
+
   const onSelectBookId = setCurrentBookId;
 
   return {
@@ -218,8 +243,10 @@ const useViewModel = () => {
       books,
       editorValue,
       currentBookId,
+      showContinueButton,
     },
     onSave,
+    onContinue,
     onSelectType,
     onSelectBookId,
   };
@@ -231,9 +258,11 @@ const SaveTo = (props) => {
       books,
       editorValue,
       currentBookId,
+      showContinueButton,
     },
     onSelectBookId,
     onSave,
+    onContinue,
     onSelectType,
   } = useViewModel(props);
 
@@ -247,15 +276,6 @@ const SaveTo = (props) => {
       >
         {SELECT_TYPES.map(item => <Radio.Button value={item.key}>{item.text}</Radio.Button>)}
       </Radio.Group>
-      <Button
-        className={styles.save}
-        type="primary"
-        block
-        onClick={onSave}
-      >
-        {__('保存到')}
-        {currentBookId === NOTE_DATA.id ? __('小记') : __('知识库')}
-      </Button>
       <Select
         className={styles.list}
         onChange={onSelectBookId}
@@ -263,6 +283,24 @@ const SaveTo = (props) => {
       >
         {books.map(book => <Select.Option value={book.id}>{book.name}</Select.Option>)}
       </Select>
+      <Button
+        className={styles.button}
+        type="primary"
+        block
+        onClick={onSave}
+      >
+        {__('保存到')}
+        {currentBookId === NOTE_DATA.id ? __('小记') : __('知识库')}
+      </Button>
+      {showContinueButton && (
+        <Button
+          className={styles.button}
+          block
+          onClick={onContinue}
+        >
+          {__('继续选取')}
+        </Button>
+      )}
       <div className={styles.editor}>
         <Editor
           onLoad={editor => editorInstance = editor}

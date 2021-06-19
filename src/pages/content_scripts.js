@@ -93,6 +93,7 @@ class App {
     if (!iframe[0]) return;
     iframe.removeClass('show');
     this.areaSelection = this.areaSelection || new AreaSelection();
+    this.areaSelection.removeAllListeners(PAGE_EVENTS.AREA_SELECTED);
     this.areaSelection.on(PAGE_EVENTS.AREA_SELECTED, (node) => {
       const html = $(node).html();
       Chrome.runtime.sendMessage({
