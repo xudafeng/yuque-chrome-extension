@@ -26,7 +26,7 @@ const Login = (props) => {
   const genPromiseList = (hostnames) => Promise.all(hostnames.map(hostname => new Promise(resolve => {
     const protocol = 'https';
     const baseURL = `${protocol}://${hostname}`;
-    proxy.getMineInfo({}, {
+    proxy.getMineInfo({
       baseURL,
     }).then(({ data, status }) => {
       if (status === 200) {

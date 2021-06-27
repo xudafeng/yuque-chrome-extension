@@ -1,7 +1,7 @@
 import request from '@/core/request';
 
 const RequestProxy = {
-  async getMineInfo(_, options = {}) {
+  async getMineInfo(options = {}) {
     return await request('/api/mine', {
       method: 'GET',
       ...options,
