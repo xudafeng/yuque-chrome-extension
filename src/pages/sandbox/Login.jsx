@@ -3,7 +3,7 @@ import {
   Button, Avatar, List,
 } from 'antd';
 import classnames from 'classnames';
-import request from '@/core/request';
+import proxy from '@/core/proxy';
 import Chrome from '@/core/chrome';
 import { GLOBAL_EVENTS } from '@/events';
 import { STORAGE_KEYS } from '@/config';
@@ -26,25 +26,23 @@ const Login = (props) => {
   const genPromiseList = (hostnames) => Promise.all(hostnames.map(hostname => new Promise(resolve => {
     const protocol = 'https';
     const baseURL = `${protocol}://${hostname}`;
-    const url = '/api/mine';
-    request(url, {
+    proxy.getMineInfo({}, {
       baseURL,
+    }).then(({ data, status }) => {
+      if (status === 200) {
+        resolve({
+          hostname,
+          protocol,
+          ...data.data,
+        });
+      } else {
+        resolve({
+          hostname,
+          protocol,
+          error: {},
+        });
+      }
     })
-      .then(({ data, status }) => {
-        if (status === 200) {
-          resolve({
-            hostname,
-            protocol,
-            ...data.data,
-          });
-        } else {
-          resolve({
-            hostname,
-            protocol,
-            error: {},
-          });
-        }
-      })
       .catch(e => {
         resolve({
           hostname,
