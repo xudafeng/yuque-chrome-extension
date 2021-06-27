@@ -14,7 +14,7 @@ export default async function request(url, options = {}) {
   };
   const defaultOptions = {
     headers,
-    timeout: 3 * 1000,
+    timeout: 3E3,
   };
   const account = await getCurrentAccount();
   if (account) {
