@@ -171,7 +171,7 @@ const useViewModel = () => {
       proxy.note.getStatus()
         .then(({ data }) => {
           const noteId = safeGet(data, 'meta.mirror.id');
-          proxy.note.getStatus(noteId, {
+          proxy.note.update(noteId, {
             body_asl: fragment,
             body_html: fragment,
             description: fragment,
@@ -195,7 +195,7 @@ const useViewModel = () => {
         });
     } else {
       getCurrentTab().then(tab => {
-        proxy.doc.saveDoc({
+        proxy.doc.create({
           title: __(`[来自收藏] ${tab.title}`),
           book_id: currentBookId,
           body_draft_asl: fragment,

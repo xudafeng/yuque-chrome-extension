@@ -8,7 +8,7 @@ const RequestProxy = {
     });
   },
   doc: {
-    async saveDoc(data = {}) {
+    async create(data = {}) {
       return await request('/api/docs', {
         method: 'POST',
         data: {
@@ -37,7 +37,7 @@ const RequestProxy = {
         method: 'GET',
       });
     },
-    async updateNote(id, params) {
+    async update(id, params) {
       return await request(`/api/notes/${id}`, {
         method: 'PUT',
         data: {
@@ -49,4 +49,4 @@ const RequestProxy = {
   },
 };
 
-module.exports = RequestProxy;
+export default RequestProxy;
