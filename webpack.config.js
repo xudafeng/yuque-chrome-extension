@@ -11,12 +11,8 @@ const ExtensionReloader = require('webpack-extension-reloader');
 
 const srcPath = path.resolve(__dirname, 'src');
 const pagesPath = path.resolve(srcPath, 'pages');
+const templatePath = path.join(srcPath, 'template.html');
 const pkg = require('./package');
-
-const fileExtensions = [
-  'jpg', 'jpeg', 'png', 'gif',
-  'eot', 'otf', 'ttf', 'woff', 'woff2',
-];
 
 const {
   npm_package_description,
@@ -27,26 +23,31 @@ const {
 
 const isProd = NODE_ENV === 'production';
 
+const fileExtensions = [
+  'jpg', 'jpeg', 'png', 'gif',
+  'eot', 'otf', 'ttf', 'woff', 'woff2',
+];
+
+const entries = {
+  contentScript: 'content_scripts',
+  background: 'background',
+  extensionPage: [
+    'options',
+    'sandbox',
+  ],
+};
+
 const plugins = [
   new webpack.ProgressPlugin(),
-  new HtmlWebpackPlugin({
-    template: path.join(srcPath, 'template.html'),
-    filename: 'options.html',
-    chunks: [ 'options' ],
+  ...[
+    ...entries.extensionPage,
+    entries.background,
+  ].map(item => new HtmlWebpackPlugin({
+    template: templatePath,
+    filename: `${item}.html`,
+    chunks: [ item ],
     minify: false,
-  }),
-  new HtmlWebpackPlugin({
-    template: path.join(srcPath, 'template.html'),
-    filename: 'background.html',
-    chunks: [ 'background' ],
-    minify: false,
-  }),
-  new HtmlWebpackPlugin({
-    template: path.join(srcPath, 'template.html'),
-    filename: 'sandbox.html',
-    chunks: [ 'sandbox' ],
-    minify: false,
-  }),
+  })),
   new CopyWebpackPlugin({
     patterns: [
       {
@@ -68,15 +69,6 @@ const plugins = [
   }),
 ];
 
-const entries = {
-  contentScript: 'content_scripts',
-  background: 'background',
-  extensionPage: [
-    'options',
-    'sandbox',
-  ],
-};
-
 if (isProd) {
   plugins.unshift(new CleanWebpackPlugin());
 } else {
@@ -95,6 +87,65 @@ entries.extensionPage.map(item => {
   entry[item] = path.join(pagesPath, item);
 });
 
+const rules = [
+  {
+    test: /\.(js|jsx)$/,
+    loader: 'babel-loader',
+    exclude: /node_modules/,
+  }, {
+    test: /\.less$/,
+    exclude(filePath) {
+      return filePath.endsWith('.module.less');
+    },
+    use: [
+      {
+        loader: 'style-loader',
+      },
+      {
+        loader: 'css-loader',
+      },
+      {
+        loader: 'less-loader',
+      },
+    ],
+  }, {
+    test: /\.module\.less$/,
+    use: [
+      {
+        loader: 'style-loader',
+      },
+      {
+        loader: 'css-loader',
+        options: {
+          modules: true,
+          localIdentName: '[name]_[local]_[hash:base64:5]',
+        },
+      },
+      {
+        loader: 'less-loader',
+      },
+    ],
+  }, {
+    test: /.css$/,
+    use: [
+      {
+        loader: 'style-loader',
+      },
+      {
+        loader: 'css-loader',
+      },
+    ],
+  }, {
+    test: new RegExp('\.(' + fileExtensions.join('|') + ')$'),
+    loader: 'file-loader?name=[name].[ext]',
+    exclude: /node_modules/,
+  }, {
+    test: /\.html$/,
+    loader: 'html-loader',
+    exclude: /node_modules/,
+  },
+];
+
 const options = {
   entry,
   output: {
@@ -102,64 +153,7 @@ const options = {
     filename: '[name].js',
   },
   module: {
-    rules: [
-      {
-        test: /\.(js|jsx)$/,
-        loader: 'babel-loader',
-        exclude: /node_modules/,
-      }, {
-        test: /\.less$/,
-        exclude(filePath) {
-          return filePath.endsWith('.module.less');
-        },
-        use: [
-          {
-            loader: 'style-loader',
-          },
-          {
-            loader: 'css-loader',
-          },
-          {
-            loader: 'less-loader',
-          },
-        ],
-      }, {
-        test: /\.module\.less$/,
-        use: [
-          {
-            loader: 'style-loader',
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              modules: true,
-              localIdentName: '[name]_[local]_[hash:base64:5]',
-            },
-          },
-          {
-            loader: 'less-loader',
-          },
-        ],
-      }, {
-        test: /.css$/,
-        use: [
-          {
-            loader: 'style-loader',
-          },
-          {
-            loader: 'css-loader',
-          },
-        ],
-      }, {
-        test: new RegExp('\.(' + fileExtensions.join('|') + ')$'),
-        loader: 'file-loader?name=[name].[ext]',
-        exclude: /node_modules/,
-      }, {
-        test: /\.html$/,
-        loader: 'html-loader',
-        exclude: /node_modules/,
-      },
-    ],
+    rules,
   },
   resolve: {
     alias: {

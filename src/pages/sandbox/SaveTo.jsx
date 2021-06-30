@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Radio, Select, message } from 'antd';
 import { get as safeGet, isEmpty } from 'lodash';
 import Chrome from '@/core/chrome';
-import request from '@/core/request';
+import proxy from '@/core/proxy';
 import LinkHelper from '@/core/link-helper';
 import Editor from '@/components/editor/Editor';
 import serialize from '@/components/editor/serialize';
@@ -76,7 +76,7 @@ const useViewModel = () => {
   };
 
   useEffect(() => {
-    request('/api/mine/personal_books?limit=200&offset=0')
+    proxy.book.getBooks()
       .then(({ data }) => {
         setBooks([
           NOTE_DATA,
@@ -168,17 +168,13 @@ const useViewModel = () => {
     const fragment = serialize(editorInstance);
 
     if (currentBookId === NOTE_DATA.id) {
-      request('/api/notes/status')
+      proxy.note.getStatus()
         .then(({ data }) => {
           const noteId = safeGet(data, 'meta.mirror.id');
-          request(`/api/notes/${noteId}`, {
-            method: 'PUT',
-            data: {
-              body_asl: fragment,
-              body_html: fragment,
-              description: fragment,
-              save_type: 'user',
-            },
+          proxy.note.update(noteId, {
+            body_asl: fragment,
+            body_html: fragment,
+            description: fragment,
           })
             .then(() => {
               getCurrentAccount().then(({ protocol, hostname }) => {
@@ -199,32 +195,25 @@ const useViewModel = () => {
         });
     } else {
       getCurrentTab().then(tab => {
-        request('/api/docs', {
-          method: 'POST',
-          data: {
-            title: __(`[来自收藏] ${tab.title}`),
-            type: 'Doc',
-            format: 'lake',
-            status: 1,
-            book_id: currentBookId,
-            body_draft_asl: fragment,
-            body_asl: fragment,
-            body: fragment,
-          },
+        proxy.doc.create({
+          title: __(`[来自收藏] ${tab.title}`),
+          book_id: currentBookId,
+          body_draft_asl: fragment,
+          body_asl: fragment,
+          body: fragment,
+        }).then(({ data }) => {
+          getCurrentAccount().then(({ protocol, hostname }) => {
+            const url = LinkHelper.goDoc(data.data, `${protocol}://${hostname}`);
+            message.success(
+              <span>
+                {__('保存成功')}，
+                <a target="_blank" href={url}>
+                  {__('立即查看')}
+                </a>
+              </span>
+            );
+          });
         })
-          .then(({ data }) => {
-            getCurrentAccount().then(({ protocol, hostname }) => {
-              const url = LinkHelper.goDoc(data.data, `${protocol}://${hostname}`);
-              message.success(
-                <span>
-                  {__('保存成功')}，
-                  <a target="_blank" href={url}>
-                    {__('立即查看')}
-                  </a>
-                </span>
-              );
-            });
-          })
           .catch(() => {
             message.error(__('保存失败'));
           });

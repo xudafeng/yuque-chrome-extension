@@ -6,5 +6,5 @@
 
 [![build status][travis-image]][travis-url]
 
-[travis-image]: https://img.shields.io/travis/xudafeng/yuque-chrome-extension.svg?style=flat-square&logo=travis
-[travis-url]: https://travis-ci.org/xudafeng/yuque-chrome-extension
+[travis-image]: https://travis-ci.com/xudafeng/yuque-chrome-extension.svg?branch=master
+[travis-url]: https://travis-ci.com/xudafeng/yuque-chrome-extension
