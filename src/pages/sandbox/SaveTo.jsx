@@ -8,6 +8,7 @@ import Editor from '@/components/editor/Editor';
 import serialize from '@/components/editor/serialize';
 import deserialize from '@/components/editor/deserialize';
 import formatHTML from '@/components/editor/format-html';
+import formatMD from '@/components/editor/format-md';
 import { STORAGE_KEYS } from '@/config';
 import { GLOBAL_EVENTS } from '@/events';
 import styles from './SaveTo.module.less';
@@ -94,7 +95,7 @@ const useViewModel = () => {
         const value = deserialize(document.body);
         setEditorValue([
           ...editorValue,
-          ...value,
+          ...formatMD(value),
         ]);
         sendResponse(true);
         return;
@@ -149,7 +150,7 @@ const useViewModel = () => {
         const html = formatHTML(res);
         const document = new window.DOMParser().parseFromString(html, 'text/html');
         const value = deserialize(document.body);
-        setEditorValue(value);
+        setEditorValue(formatMD(value));
       });
     }
   }, [
